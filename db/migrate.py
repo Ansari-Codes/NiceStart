@@ -5,23 +5,7 @@ import importlib
 import os
 import sys
 from pathlib import Path
-
-# --- Database helpers ---
-
-async def INIT_DB():
-    """Initialize async database connection using ENV.DB_CREDS"""
-    engine = DB_CREDS.get("ENGINE", "sqlite")
-    if engine == "sqlite":
-        return await aiosqlite.connect(DB_CREDS["NAME"])
-    raise NotImplementedError(f"Engine '{engine}' not supported yet.")
-
-async def RUN_DB(query: str):
-    """Run a full SQL script asynchronously."""
-    conn = await INIT_DB()
-    async with conn.cursor() as cur:
-        await cur.executescript(query)
-    await conn.commit()
-    await conn.close()
+from .db import RUN_SQL
 
 # --- Migration management ---
 
@@ -70,7 +54,7 @@ async def apply_migrations():
         try:
             mod = importlib.import_module(f"{MIGRATIONS_FOLDER}.{file}")
             sql = mod.up()
-            await RUN_DB(sql)
+            await RUN_SQL(sql)
             mark_applied(file)
             print(f"✅ Applied: {file}")
         except Exception as e:
@@ -88,7 +72,7 @@ async def rollback_last():
     try:
         mod = importlib.import_module(f"backend.{MIGRATIONS_FOLDER}.{last}")
         sql = mod.down()
-        await RUN_DB(sql)
+        await RUN_SQL(sql)
         print("✅ Rollback complete.")
     except Exception as e:
         print(f"❌ Rollback failed: {e}")

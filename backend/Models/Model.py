@@ -5,15 +5,15 @@ class Model(ABC):
         super().__init__()
     
     @abstractmethod
-    def create(self, obj: dict):
+    async def create(self, obj: dict|list) -> dict|list:
         pass
 
     @abstractmethod
-    def create(self, obj: dict):
+    async def update(self, obj: dict|list) -> dict|list:
         pass
 
     @abstractmethod
-    def delete(self, obj: dict):
+    async def delete(self, obj: dict|list) -> dict|list:
         pass
 
 class Required(Exception):pass
