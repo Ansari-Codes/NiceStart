@@ -1,13 +1,25 @@
 from UI import LabeledInput, Card, Center, Label, INIT_THEME, Button
-from lib.formHandler import Variable, Form
+from library.formHandler import Variable, Group
+from backend import ControlAuth
 
-variables = [
+def signup():
+    pass
+
+form_variables = [
     Variable("name", ""),
     Variable("email", ""),
     Variable("password", ""),
+    Variable("confirm", ""),
 ]
-form = Form(variables)
+errs_variables = [
+    Variable("name", ""),
+    Variable("email", ""),
+    Variable("password", ""),
+    Variable("confirm", ""),
+]
 
+form = Group(form_variables)
+errs = Group(errs_variables)
 inputs_and_labels = [
     [
         dict(

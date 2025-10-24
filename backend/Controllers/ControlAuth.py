@@ -44,7 +44,7 @@ async def create(data: dict) -> dict:
         except Exception as e:
             result = []
             errors['Unknown'] = "Sorry, we cannot create your account!"
-    success = not errors
+    success = not bool(errors)
     return {
         "success": success,
         "errors": errors,

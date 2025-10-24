@@ -1,5 +1,5 @@
 from UI import LabeledInput, Card, Center, Label, INIT_THEME, Button
-from lib.formHandler import Variable, Form
+from library.formHandler import Variable, Form
 
 variables = [
     Variable("identifier", ""),
