@@ -6,7 +6,7 @@ class Variable:
 class Form:
     def __init__(self, variables = [], name:str = "form"):
         self.variables = variables
-        self.name = name
+        self._name = name
     
     def add_variable(self, variable):
         self.variables.append(variable)
@@ -20,6 +20,8 @@ class Form:
     def __getattr__(self, name):
         if name == 'variables':
             return self.variables
+        elif name == '_name':
+            raise AttributeError("_name is reserved for form, you cannot access it.")
         elif name in [i.name for i in self.variables]:
             return [i for i in self.variables if i.name == name][0]
         else:

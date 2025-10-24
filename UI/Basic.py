@@ -1,3 +1,4 @@
+from typing import Literal
 from nicegui import ui
 
 def Label(
@@ -32,7 +33,7 @@ def Card(
         clas: str|None = "", 
         props: str|None = "",
         styles: str|None = "",
-        align: str|None = None
+        align: Literal['start', 'end', 'center', 'baseline', 'stretch']|None = None
     ):
     return ui.card(align_items=align).classes(clas).props(props).style(styles)
 
