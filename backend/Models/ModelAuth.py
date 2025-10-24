@@ -1,9 +1,11 @@
 from typing import Literal
-from .Model import InvalidChoice, Model, Required, NotFound, ValidationError
-from lib.dbQuery import Query
+from .Model import Model
+from EXCEPTIONS import InvalidChoice, Required, NotFound, ValidationError
+from library.dbQuery import Query
 from db.db import RUN_SQL
 import bcrypt
 
+TABLE = "users"
 
 class Auth(Model):
     def __init__(self):
@@ -25,14 +27,14 @@ class Auth(Model):
         # Hash the password securely
         hashed_password = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
-        SQL = Query("users").insert(
+        SQL = Query(TABLE).insert(
             name=name,
             email=email,
             password=hashed_password,
         ).SQL()
 
         await RUN_SQL(SQL)
-        FETCH = Query("users").select().where(name=name).SQL()
+        FETCH = Query(TABLE).select().where(name=name).SQL()
         return await RUN_SQL(FETCH, True)
 
     # ----------------- UPDATE -----------------
@@ -40,8 +42,8 @@ class Auth(Model):
         id_ = obj.get("id")
         name = obj.get("name")
         email = obj.get("email")
-        prevpswd = obj.get("password", "")
-        new_password = obj.get("new_password", "")
+        prevpswd = obj.get("prevpswd", "")
+        new_password = obj.get("password", "")
 
         if not id_:
             raise Required("User ID")
@@ -62,14 +64,14 @@ class Auth(Model):
         else:
             hashed_new = stored_hash  # keep existing
 
-        SQL = Query("users").update(
+        SQL = Query(TABLE).update(
             name=name,
             email=email,
             password=hashed_new
         ).where(id=id_).SQL()
 
         await RUN_SQL(SQL)
-        FETCH = Query("users").select().where(id=id_).SQL()
+        FETCH = Query(TABLE).select().where(id=id_).SQL()
         return await RUN_SQL(FETCH, True)
 
     # ----------------- DELETE -----------------
@@ -90,7 +92,7 @@ class Auth(Model):
         if not bcrypt.checkpw(password.encode(), stored_hash.encode()):
             raise ValidationError("Password does not match.")
 
-        SQL = Query("users").delete().where(id=id_).SQL()
+        SQL = Query(TABLE).delete().where(id=id_).SQL()
         await RUN_SQL(SQL)
         return {"deleted": True}
 
@@ -103,7 +105,7 @@ class Auth(Model):
             case _: raise InvalidChoice("Mode can only be 'c', 'u', or 'd'.")
 
     async def getUserById(self, id_):
-        SQL = Query("users").select().where(id=id_).SQL()
+        SQL = Query(TABLE).select().where(id=id_).SQL()
         FETCH = await RUN_SQL(SQL, to_fetch=True)
         return FETCH
 

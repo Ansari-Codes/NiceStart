@@ -16,7 +16,3 @@ class Model(ABC):
     async def delete(self, obj: dict|list) -> dict|list:
         pass
 
-class Required(Exception):pass
-class ValidationError(Exception):pass
-class NotFound(Exception):pass
-class InvalidChoice(Exception):pass

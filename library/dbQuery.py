@@ -34,13 +34,14 @@ class Query:
     # --- WHERE ---
     def where(self, **conditions):
         for k, v in conditions.items():
+            o = None
             if isinstance(v, str):
                 v = f"'{v}'"
                 o = '='
             elif isinstance(v, (tuple, list)):
                 v = f"'{v[1]}'"
                 o = f"'{v[0]}'"
-            self._where.append(f"{k}{o}{v}")
+            if o:self._where.append(f"{k}{o}{v}")
         return self
 
     # --- ORDER BY ---
