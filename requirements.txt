@@ -1,0 +1,4 @@
+nicegui==3.1
+aerich==0.9
+tortoise-orm==0.25
+typer==0.20
