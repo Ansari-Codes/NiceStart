@@ -108,6 +108,13 @@ class Auth(Model):
         SQL = Query(TABLE).select().where(id=id_).SQL()
         FETCH = await RUN_SQL(SQL, to_fetch=True)
         return FETCH
+    
+    async def getUserByIdentifier(self, entity: str):
+        SQL = Query(TABLE).select().where(
+                email = entity
+            ).orWhere(name = entity).SQL()
+        FETCH = await RUN_SQL(SQL, to_fetch=True)
+        return FETCH
 
     # ----------------- PUBLIC INTERFACE -----------------
     async def implement(self, mode: Literal['c', 'u', 'd'], obj: dict | list = {}):

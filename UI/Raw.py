@@ -1,3 +1,4 @@
+from typing import Any
 from nicegui import ui
 
 def RawButton(
@@ -33,9 +34,15 @@ def RawLabel(
         clas: str|None = "", 
         props: str|None = "",
         styles: str|None = "",
+        source: Any = None
     ):
-    return ui.html(
+    html = ui.html(
             text or "",
             sanitize=lambda c: c, 
             tag='p'
         ).classes(clas).props(props).style(styles)
+    if source:
+        assert hasattr(source, 'value'), "Given source object should have value attribute"
+        html.content = source.value or ""
+        html.bind_content_from(source, 'value')
+    return html

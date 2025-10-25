@@ -22,8 +22,8 @@ def LabeledInput(
     with Raw.RawCol() as cont:
         for name, label in labels.items():
             with Raw.RawCol(clas=clas_lbl, props=props_lbl, styles=styles_lbl):
-                group['labels'][name] = Raw.RawLabel(**label)
-                group['errors'][name] = Raw.RawLabel(clas="text-red-500")
+                group['labels'][name] = Raw.RawLabel(**{k:v for k,v in label.items() if k!='err'})
+                group['errors'][name] = Raw.RawLabel(clas="text-red-500", source=label.get("err"))
         for name, inpu in inputs.items():
             group['inputs'][name] = Basic.Input(**inpu).classes("w-full")
     group["cont"] = cont

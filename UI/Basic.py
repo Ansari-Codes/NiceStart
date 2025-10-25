@@ -1,5 +1,6 @@
 from typing import Literal
 from nicegui import ui
+from .Raw import RawRow, RawLabel
 
 def Label(
         text: str = "", 
@@ -53,13 +54,27 @@ def LinkBtn(
         text: str = "",
         link: str = "",
         new_tab: bool = False,
+        icon: str = "",
+        ihsm: bool = False,
         clas: str|None = "", 
         props: str|None = "",
         styles: str|None = "",
     ):
-    return ui.link(text, link, new_tab).classes(
-        "px-3 py-2 text-white rounded-md no-underline shadow-sm bg-btn transition-all duration-200"
-        ).classes(clas).props(props).style(styles)
+    base_classes = (
+        "inline-flex items-center justify-center gap-2 "
+        "px-4 py-2 rounded-sm text-white text-[14px] font-medium "
+        "transition-all duration-200 ease-in-out "
+        "bg-btn shadow-md hover:shadow-lg active:scale-95 "
+        "select-none cursor-pointer ripple no-underline"
+    )
+    classes = f"{base_classes} {clas or ''}".strip()
+    with ui.link("", link, new_tab).classes(classes).props(props).style(styles) as btn:
+        if icon:
+            clapend = "hidden sm:flex"*ihsm
+            ui.icon(icon).classes("text-white text-[18px]"+clapend)
+        if text:
+            ui.label(text)
+    return btn
 
 def Input(
         clas: str|None = "", 
@@ -70,7 +85,7 @@ def Input(
     ):
     inp = ui.input(**kwargs).props("dense outlined").classes(clas).props(props).style(styles)
     if model:
-        inp.bind_value_to(model, 'value')
+        inp.bind_value(model, 'value')
     return inp
 
 def Button(
@@ -83,3 +98,31 @@ def Button(
     ):
     if not config: config = {}
     return ui.button(text=text, on_click=on_click, **config).classes(clas).props(props).style(styles)
+def SoftButton(
+    text: str = "", 
+    on_click=lambda: (),
+    icon: str = "",
+    clas: str | None = "", 
+    props: str | None = "",
+    styles: str | None = "",
+):
+    base_classes = (
+        "inline-flex items-center justify-center gap-2 "
+        "px-4 py-2 rounded-sm text-white text-[14px] "
+        "transition-all duration-200 ease-in-out "
+        "bg-btn shadow-md hover:shadow-lg "
+        "select-none cursor-pointer ripple no-underline"
+    )
+    classes = f"{base_classes} {clas or ''}".strip()
+    base_props = "elevated"
+    props = f"{base_props} {props or ''}".strip()
+    with ui.element("button").classes(classes).props(props).style(styles) as btn:
+        if icon:
+            ui.icon(icon).classes("text-white")
+        if text:
+            ui.label(text)
+    btn.on("click", on_click)
+    return btn
+
+def AddSpace():
+    return ui.space()

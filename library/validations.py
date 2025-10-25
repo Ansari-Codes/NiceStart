@@ -7,7 +7,7 @@ def IsValidName(name: str):
     if not name or not isinstance(name, str):
         return False
     for n in name:
-        if not (n in ascii_letters+digits):
+        if not (n in ascii_letters+digits+' '):
             return False
     return True
 

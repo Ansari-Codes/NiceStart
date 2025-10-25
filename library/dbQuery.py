@@ -31,19 +31,6 @@ class Query:
         self._action = "delete"
         return self
 
-    # --- WHERE ---
-    def where(self, **conditions):
-        for k, v in conditions.items():
-            o = None
-            if isinstance(v, str):
-                v = f"'{v}'"
-                o = '='
-            elif isinstance(v, (tuple, list)):
-                v = f"'{v[1]}'"
-                o = f"'{v[0]}'"
-            if o:self._where.append(f"{k}{o}{v}")
-        return self
-
     # --- ORDER BY ---
     def order_by(self, column, direction="ASC"):
         self._order_by = f"{column} {direction.upper()}"
@@ -53,6 +40,34 @@ class Query:
     def limit(self, n: int):
         self._limit = n
         return self
+
+    # --- WHERE ---
+    def where(self, **conditions):
+        """Base WHERE clause (replaces any previous conditions)."""
+        self._where = [self._build_condition(k, v) for k, v in conditions.items()]
+        return self
+
+    def andWhere(self, **conditions):
+        """Append AND conditions to existing WHERE clause."""
+        for k, v in conditions.items():
+            self._where.append(f"AND {self._build_condition(k, v)}")
+        return self
+
+    def orWhere(self, **conditions):
+        """Append OR conditions to existing WHERE clause."""
+        for k, v in conditions.items():
+            self._where.append(f"OR {self._build_condition(k, v)}")
+        return self
+
+    # --- internal helper for condition building ---
+    def _build_condition(self, key, value):
+        if isinstance(value, str):
+            return f"{key}='{value}'"
+        elif isinstance(value, (tuple, list)) and len(value) == 2:
+            # e.g. ("<", 10) or (">=", 5)
+            return f"{key}{value[0]}{value[1]}"
+        else:
+            return f"{key}={value}"
 
     # --- SQL BUILDER ---
     def SQL(self) -> str:
@@ -64,10 +79,10 @@ class Query:
             return f"INSERT INTO {self.table} ({cols}) VALUES ({vals});"
 
         if self._action == "select":
-            cols = ", ".join(self._columns)
+            cols = ", ".join(self._columns) if self._columns else "*"
             sql = f"SELECT {cols} FROM {self.table}"
             if self._where:
-                sql += " WHERE " + " AND ".join(self._where)
+                sql += " WHERE " + " ".join(self._where)
             if self._order_by:
                 sql += f" ORDER BY {self._order_by}"
             if self._limit:
@@ -80,13 +95,13 @@ class Query:
             )
             sql = f"UPDATE {self.table} SET {sets}"
             if self._where:
-                sql += " WHERE " + " AND ".join(self._where)
+                sql += " WHERE " + " ".join(self._where)
             return sql + ";"
 
         if self._action == "delete":
             sql = f"DELETE FROM {self.table}"
             if self._where:
-                sql += " WHERE " + " AND ".join(self._where)
+                sql += " WHERE " + " ".join(self._where)
             return sql + ";"
 
         raise ValueError("No action defined (insert/select/update/delete)")
