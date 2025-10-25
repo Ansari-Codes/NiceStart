@@ -55,24 +55,6 @@ async def create(data: dict) -> dict:
                 result = [result]
         except Exception as e:
             result = []
-            errors['unknown'] = "Sorry, we cannot create your account!"
-    success = not bool(errors)
-    return {
-        "success": success,
-        "errors": errors,
-        "data": result
-    }
-
-async def create(data: dict) -> dict:
-    errors = await _validate(data)
-    result = []
-    if not errors:
-        try:
-            result = await Auth().create(data)
-            if not isinstance(result, (list, tuple)):
-                result = [result]
-        except Exception as e:
-            result = []
             errors['Unknown'] = "Sorry, we cannot create your account!"
     success = not bool(errors)
     return {
