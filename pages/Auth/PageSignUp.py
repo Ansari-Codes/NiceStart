@@ -1,4 +1,4 @@
-from UI import LabeledInput, Card, Center, Label, INIT_THEME, Button, Notify, Link
+from UI import LabeledInput, Card, Center, Label, INIT_THEME, SoftBtn, Notify, Link
 from library.formHandler import Variable, Group
 from backend import ControlAuth
 from utils.Storage import updateUserStorage
@@ -9,11 +9,11 @@ async def signup(form, errs):
     data = form.to_dict()
     response = await ControlAuth.create(data)
     if response.get("success"):
-        updateUserStorage({k:v for k,v, in response.get("data")[0].items() if k!="password"})
+        updateUserStorage({k:v for k,v, in response.get("data", {})[0].items() if k!="password"})
         updateUserStorage({"auth":True})
         navigate('/')
     else:
-        errors = response.get("errors")
+        errors = response.get("errors", {})
         errs.name.value = errors.get("name", "")
         errs.email.value = errors.get("email", "")
         errs.password.value = errors.get("password", "")
@@ -101,5 +101,5 @@ async def create():
             Label("Sign Up", "w-full border-b-2 text-2xl font-bold text-center")
             for i in inputs_and_labels:
                 LabeledInput(*i)
-            Button("Create Account", lambda: signup(form, errs), "w-full")
+            SoftBtn("Create Account", lambda: signup(form, errs), clas="w-full")
             Link('Or Login here...', ROUTES.LOGIN)

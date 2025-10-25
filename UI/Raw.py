@@ -1,6 +1,13 @@
 from typing import Any
 from nicegui import ui
 
+def Div(       
+        clas: str|None = "", 
+        props: str|None = "",
+        styles: str|None = "",
+    ):
+    return ui.element().classes(clas).props(props).style(styles)
+
 def RawButton(
         content: str = "",
         on_click = lambda: (),

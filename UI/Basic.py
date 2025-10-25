@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Callable, Literal
 from nicegui import ui
 from .Raw import RawRow, RawLabel
 
@@ -47,15 +47,15 @@ def Link(
         styles: str|None = "",
     ):
     return ui.link(text, link, new_tab).classes(
-        "hover:underline text-white"
+        "hover:underline"
     ).classes(clas).props(props).style(styles)
 
-def LinkBtn(
+def SoftBtn(
         text: str = "",
+        on_click: Callable = lambda: (),
         link: str = "",
         new_tab: bool = False,
         icon: str = "",
-        ihsm: bool = False,
         clas: str|None = "", 
         props: str|None = "",
         styles: str|None = "",
@@ -68,12 +68,12 @@ def LinkBtn(
         "select-none cursor-pointer ripple no-underline"
     )
     classes = f"{base_classes} {clas or ''}".strip()
-    with ui.link("", link, new_tab).classes(classes).props(props).style(styles) as btn:
+    with (ui.link("", link, new_tab) if link else RawRow()).classes(classes).props(props).style(styles) as btn:
         if icon:
-            clapend = "hidden sm:flex"*ihsm
-            ui.icon(icon).classes("text-white text-[18px]"+clapend)
+            ui.icon(icon).classes("text-[18px]")
         if text:
             ui.label(text)
+    btn = btn.on('click', on_click)
     return btn
 
 def Input(
@@ -98,31 +98,6 @@ def Button(
     ):
     if not config: config = {}
     return ui.button(text=text, on_click=on_click, **config).classes(clas).props(props).style(styles)
-def SoftButton(
-    text: str = "", 
-    on_click=lambda: (),
-    icon: str = "",
-    clas: str | None = "", 
-    props: str | None = "",
-    styles: str | None = "",
-):
-    base_classes = (
-        "inline-flex items-center justify-center gap-2 "
-        "px-4 py-2 rounded-sm text-white text-[14px] "
-        "transition-all duration-200 ease-in-out "
-        "bg-btn shadow-md hover:shadow-lg "
-        "select-none cursor-pointer ripple no-underline"
-    )
-    classes = f"{base_classes} {clas or ''}".strip()
-    base_props = "elevated"
-    props = f"{base_props} {props or ''}".strip()
-    with ui.element("button").classes(classes).props(props).style(styles) as btn:
-        if icon:
-            ui.icon(icon).classes("text-white")
-        if text:
-            ui.label(text)
-    btn.on("click", on_click)
-    return btn
 
 def AddSpace():
     return ui.space()

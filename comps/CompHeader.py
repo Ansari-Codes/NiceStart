@@ -1,4 +1,4 @@
-from UI import Label, LinkBtn, Header, RawRow
+from UI import Label, SoftBtn, Header, RawRow
 from ENV import APP_NAME
 from utils.Auth import isAuthenticated
 from routes.ROUTES import LOGIN, SIGNUP, DASHBOARD
@@ -8,8 +8,8 @@ def CompHeader():
         Label(APP_NAME, "text-xl font-bold")
         with RawRow(clas="w-fit gap-2"):
             if isAuthenticated():
-                LinkBtn('Dashboard', DASHBOARD)
+                SoftBtn('Dashboard', link=DASHBOARD)
             else:
-                LinkBtn('Login', LOGIN)
-                LinkBtn('Signup', SIGNUP)
+                SoftBtn('Login', link=LOGIN)
+                SoftBtn('Signup', link=SIGNUP)
     return header

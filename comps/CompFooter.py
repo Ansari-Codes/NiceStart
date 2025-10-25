@@ -9,6 +9,6 @@ def CompFooter():
         with RawRow(clas="w-fit gap-2"):
             if not isAuthenticated():
                 Link('Login', LOGIN)
-                RawLabel(".")
+                RawLabel(".", clas="text-white")
                 Link('Signup', SIGNUP)
     return footer
