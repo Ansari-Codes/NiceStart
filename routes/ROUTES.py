@@ -13,5 +13,5 @@ def require_auth(func):
         if isAuthenticated():
             return await func(*args, **kwargs)
         else:
-            navigate('/login')
+            navigate(LOGIN)
     return wrapper
